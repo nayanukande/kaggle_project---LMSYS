@@ -11,6 +11,11 @@ pandas
 pip
 python-dotenv
 scikit-learn
--e .
 seaborn
+torch
+torchvision
+torchaudio
+transformers
+-e .
+
 
