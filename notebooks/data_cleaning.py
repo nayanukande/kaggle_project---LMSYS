@@ -31,7 +31,12 @@ def contains_cyrilic(text):
     cyrillic_pattern = re.compile('[\u0400-\u04FF\u0500-\u052F\u2DE0-\u2DFF\uA640-\uA69F\u1C80-\u1C8F]')
     return bool(cyrillic_pattern.search(text))
 # Applying the function to the dataframe
-df['clean_prompt'] = df[]
+df['contains_cyrillic'] = df['clean_response_a'].apply(lambda x: contains_cyrilic(str(x)))
+# Filter rows containing Cyrillic text
+cyrillic_rows = df[df['contains_cyrillic']]
+# To calculate the count of contains cyrillic script
+true_count = df['contains_cyrillic'].sum()
+print(true_count)
 
 df.head(10)
 
