@@ -54,6 +54,69 @@ df.to_csv('decoded_output_file_v2.csv', index=False, encoding='utf-8-sig')
 
 # Third function to transalte all language and formatting to english and here we importing a decoded output file
 # So actually this is the third step but unfortunately we have to create a new .ipynb file for trnsalting task because the task itself is very big. but now we have to consider this code snippet as this function and do the opeation forward.
+pip install googletrans==3.1.0a0
+# third function to transalte all language and formatting to english and here we importing a decoded output file
+df = pd.read_csv(r'/content/drive/MyDrive/ArmoRM - LMSYS/decoded_output_file_v2.csv')
+# Define the batch size
+batch_size = 1000
+# Calculate the number of batches
+num_batches = np.ceil(len(df) / batch_size).astype(int)
+# Initialize the translator
+translator = Translator()
+# Define a function to translate text to English
+def translate_to_english(text):
+    if isinstance(text, str) and text:  # Ensure the text is a non-empty string
+        try:
+            print(f"Translating text: {repr(text)[:50]}...")  # Show the input text
+            translation = translator.translate(text, dest='en')
+            if translation is None or translation.text is None:
+                print("Translation returned None.")
+                return text
+            return translation.text
+        except Exception as e:
+            print(f"Error translating text: {e}")
+            return text
+    else:
+        print("Invalid text input.")
+    return text  # Return the original text if it's None or not a string
+# Loop through each batch
+for i in range(num_batches):
+    # Define the start and end index for this batch
+    start_idx = i * batch_size
+    end_idx = min((i + 1) * batch_size, len(df))
+    # Select the batch
+    batch_df = df.iloc[start_idx:end_idx].copy()
+    # Perform the translation on the batch
+    batch_df['translated_prompt'] = batch_df['decoded_prompt'].apply(translate_to_english)
+    batch_df['translated_response_a'] = batch_df['decoded_response_a'].apply(translate_to_english)
+    batch_df['translated_response_b'] = batch_df['decoded_response_b'].apply(translate_to_english)
+    # Save the translated batch to a CSV file
+    batch_df.to_csv(f'translated_batch_{i+1}.csv', index=False, encoding='utf-8-sig')
+    # Optionally, you can print a status update
+    print(f"Batch {i+1}/{num_batches} processed and saved.")
+import pandas as pd
+
+# List of paths to your batch files
+batch_files = [
+    '/content/drive/MyDrive/ArmoRM - LMSYS/translated_batch/translated_batch_1.csv',
+    '/content/drive/MyDrive/ArmoRM - LMSYS/translated_batch/translated_batch_1.csv',
+    '/content/drive/MyDrive/ArmoRM - LMSYS/translated_batch/translated_batch_1.csv',
+    '/content/drive/MyDrive/ArmoRM - LMSYS/translated_batch/translated_batch_1.csv',
+    '/content/drive/MyDrive/ArmoRM - LMSYS/translated_batch/translated_batch_1.csv',
+    '/content/drive/MyDrive/ArmoRM - LMSYS/translated_batch/translated_batch_1.csv',
+    '/content/drive/MyDrive/ArmoRM - LMSYS/translated_batch/translated_batch_1.csv',
+    '/content/drive/MyDrive/ArmoRM - LMSYS/translated_batch/translated_batch_1.csv',
+    # Add more paths as needed
+]
+# Combine them into a single DataFrame
+translated_df = pd.concat([pd.read_csv(f) for f in batch_files], ignore_index=True)
+# Save the combined DataFrame to a CSV file
+translated_df.to_csv('/content/drive/MyDrive/ArmoRM - LMSYS/translated_batch/translated_output.csv', index=False, encoding='utf-8-sig')
+# Remove columns 'B' and 'D'
+translated_df = translated_df.drop(columns=['decoded_prompt', 'decoded_response_a', 'decoded_response_b'])
+# Reorder the remaining columns to ['E', 'C', 'A']
+translated_df = translated_df[['id', 'model_a', 'model_b', 'translated_prompt', 'translated_response_a', 'translated_response_b', 'winner_model_a', 'winner_model_b', 'winner_tie']]
+translated_df.to_csv('/content/drive/MyDrive/ArmoRM - LMSYS/translated_batch/translated_output_1.csv', index=False, encoding='utf-8-sig')
 
 # Here in this code snippet we're performing the opertion to identify the unicode escape sequence and delete the UES rows and then merge with transalted 
 # Loading the dataset for performin filtering opeation of unicode escape sequence
