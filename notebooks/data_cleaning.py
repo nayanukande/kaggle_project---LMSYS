@@ -4,7 +4,7 @@ import re
 import codecs
 import googletrans
 from googletrans import Translator
-'''
+
 # Loading the dataset for performin filtering opeation of unicode escape sequence
 df=pd.read_csv(r'C:\Users\nayan\test_conda\kaggle_competition\data\external\train.csv')
 # Identify columns that start with 'Unnamed'
@@ -51,33 +51,43 @@ new_column_order = ['id', 'decoded_prompt', 'decoded_response_a', 'decoded_respo
 df = df[new_column_order]
 # Save to CSV with error handling
 df.to_csv('decoded_output_file_v2.csv', index=False, encoding='utf-8-sig')
-'''
 
-# third function to transalte all language and formatting to english and here we importing a decoded output file
-df = pd.read_csv(r'C:\Users\nayan\test_conda\kaggle_competition\data\interim\decoded_output_file_v2.csv')
-# Initialize the translator
-translator = Translator()
-# Define a function to translate text to English
-def translate_to_english(text):
-    if isinstance(text, str) and text:  # Ensure the text is a non-empty string
-        try:
-            print(f"Translating text: {repr(text)[:50]}...")  # Show the input text
-            translation = translator.translate(text, dest='en')
-            if translation is None or translation.text is None:
-                print("Translation returned None.")
-                return text
-            return translation.text
-        except Exception as e:
-            print(f"Error translating text: {e}")
-            return text
-    else:
-        print("Invalid text input.")
-    return text  # Return the original text if it's None or not a string
+# Third function to transalte all language and formatting to english and here we importing a decoded output file
+# So actually this is the third step but unfortunately we have to create a new .ipynb file for trnsalting task because the task itself is very big. but now we have to consider this code snippet as this function and do the opeation forward.
 
-# Translate the decoded text to English
-df['translated_prompt'] = df['decoded_prompt'].apply(translate_to_english)
-df['translated_response_a'] = df['decoded_response_a'].apply(translate_to_english)
-df['translated_response_b'] = df['decoded_response_b'].apply(translate_to_english)
-
-# Save to CSV with error handling
-df.to_csv('translated_output_file.csv', index=False, encoding='utf-8-sig', errors='replace')
+# Here in this code snippet we're performing the opertion to identify the unicode escape sequence and delete the UES rows and then merge with transalted 
+# Loading the dataset for performin filtering opeation of unicode escape sequence
+df=pd.read_csv(r'C:\Users\nayan\test_conda\kaggle_competition\data\external\train.csv')
+# Function to detect Unicode escape sequence
+def contains_unicode_escape(text):
+    if isinstance(text, str):
+        unicode_escape_pattern = re.compile(r'\\u[0-9A-Fa-f]{4}')
+        return bool(unicode_escape_pattern.search(text))
+    return False
+# Apply the function to the response_a column
+df['contains_unicode_escape'] = df['response_a'].apply(contains_unicode_escape)
+# Filter the DataFrame to include only rows where 'column_to_check' is True
+filtered_df = df[df['contains_unicode_escape'] == False]
+# Get the count of rows with Unicode escape sequences
+count = len(filtered_df)
+# Save the filtered rows to a CSV file
+filtered_df.to_csv('train_csv_dataset_notContain_UES.csv', index=False)
+#merging opertion
+df1 = pd.read_csv(r'C:\Users\nayan\test_conda\kaggle_competition\data\interim\train_csv_dataset_notContain_UES.csv')
+# Drop specified columns
+df1 = df1.drop(columns='contains_unicode_escape')
+df2 = pd.read_csv(r'C:\Users\nayan\test_conda\kaggle_competition\data\interim\translated_output_1.csv')
+# Rename columns
+df2.rename(columns={
+    'translated_prompt': 'prompt',
+    'translated_response_a': 'response_a',
+    'translated_response_b': 'response_b'
+}, inplace=True)
+# Convert float values to integers
+df2['winner_model_a'] = df2['winner_model_a'].astype(int)
+df2['winner_model_b'] = df2['winner_model_b'].astype(int)
+df2['winner_tie'] = df2['winner_tie'].astype(int)
+# Concatenate df1 and df2
+combined_df = pd.concat([df1, df2])
+# Sort by the 'id' column to restore original order
+sorted_df = combined_df.sort_values(by='id').reset_index(drop=True)
