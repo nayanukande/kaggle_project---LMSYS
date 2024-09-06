@@ -25,8 +25,12 @@ The dataset includes records of conversations where users provide prompts, and t
 - `response_a`: Response from model A.
 - `response_b`: Response from model B.
 
-#### `sample_submission.csv`
-- An example of the required submission format for the competition. 
+#### An example of the `sample_submission.csv` file:
+```plaintext
+id,winner_model_a,winner_model_b,winner_tie
+1,0.75,0.20,0.05
+2,0.40,0.55,0.05
+3,0.30,0.40,0.30
 
 ### Example Submission Format
 The `sample_submission.csv` file should have the following structure:
@@ -34,10 +38,3 @@ The `sample_submission.csv` file should have the following structure:
 - `winner_model_a`: Predicted probability that model A is preferred (a value between 0 and 1).
 - `winner_model_b`: Predicted probability that model B is preferred (a value between 0 and 1).
 - `winner_tie`: Predicted probability that there is a tie (a value between 0 and 1).
-
-An example of the `sample_submission.csv` file:
-```plaintext
-id,winner_model_a,winner_model_b,winner_tie
-1,0.75,0.20,0.05
-2,0.40,0.55,0.05
-3,0.30,0.40,0.30
