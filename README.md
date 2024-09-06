@@ -1,7 +1,7 @@
 # Chatbot Arena Human Preference Prediction
 
 ## Project Overview
-The **Chatbot Arena Human Preference Prediction** project aims to predict user preferences in head-to-head battles between large language models (LLMs) within the Chatbot Arena. The goal is to develop a machine learning model that determines which chatbot response users are likely to prefer based on a dataset of conversations between users and chatbots. This project contributes to improving chatbot alignment with human preferences through Reinforcement Learning from Human Feedback (RLHF).
+The **Chatbot Arena Human Preference Prediction** project aims to predict user preferences in head-to-head battles between large language models (LLMs) within the Chatbot Arena. The goal is to develop a machine learning model that determines which chatbot response users are likely to prefer based on a dataset of conversations between users and chatbots. This personal project contributes to improving chatbot alignment with human preferences through Reinforcement Learning from Human Feedback (RLHF).
 
 ## Dataset
 The dataset includes records of conversations where users provide prompts, and two LLMs (Models A and B) generate responses. Users select the response they prefer, and the task is to predict which response will be favored.
@@ -25,16 +25,17 @@ The dataset includes records of conversations where users provide prompts, and t
 - `response_a`: Response from model A.
 - `response_b`: Response from model B.
 
-#### An example of the `sample_submission.csv` file:
-```plaintext
-id,winner_model_a,winner_model_b,winner_tie
-1,0.75,0.20,0.05
-2,0.40,0.55,0.05
-3,0.30,0.40,0.30
-
 ### Example Submission Format
 The `sample_submission.csv` file should have the following structure:
 - `id`: Unique identifier for each test set row.
 - `winner_model_a`: Predicted probability that model A is preferred (a value between 0 and 1).
 - `winner_model_b`: Predicted probability that model B is preferred (a value between 0 and 1).
 - `winner_tie`: Predicted probability that there is a tie (a value between 0 and 1).
+
+#### `sample_submission.csv`
+An example of the `sample_submission.csv` file:
+```plaintext
+id,winner_model_a,winner_model_b,winner_tie
+1,0.75,0.20,0.05
+2,0.40,0.55,0.05
+3,0.30,0.40,0.30
